@@ -1,31 +1,29 @@
-import * as console from "node:console";
+import Registry from "../command/registry";
+import { Message } from "../message/message";
 
 type BotParams = {
-  commandTokens: string[];
+  commandRegistry: Registry;
 };
 
 export class Bot {
-  public commandTokens: string[];
+  private commandRegistry: Registry;
 
-  constructor({ commandTokens }: BotParams) {
-    this.commandTokens = commandTokens;
+  constructor({ commandRegistry }: BotParams) {
+    this.commandRegistry = commandRegistry;
   }
-  readMessage(message: string): void {
-    // TODO: inject the Command class to deal with commands stuff
-    // TODO: introduce dependency injection
-    // TODO: review dependency schema
-    if (this.hasCommandToken(message)) {
-      const commandName = message.replace(
-        new RegExp(`^(${this.commandTokens.join("|")})`),
-        "",
-      );
+  readMessage(message: Message): void {
+    if (message.messageIncludesCommandToken()) {
+      const commandName = message.extractCommandName();
       this.executeCommand(commandName);
     }
   }
 
-  executeCommand(command: string): void {}
-
-  hasCommandToken(message: string): boolean {
-    return this.commandTokens.some((token) => message.startsWith(token));
+  executeCommand(command: string): void {
+    let comm;
+    try {
+      const commandName = command.charAt(0).toUpperCase() + command.slice(1);
+      const commandObj = this.commandRegistry.getCommand(commandName);
+      commandObj?.run();
+    } catch (e) {}
   }
 }
