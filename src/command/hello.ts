@@ -1,7 +1,11 @@
-export class HelloCommand {
-  constructor() {}
+import { Command } from "./command";
 
-  execute(): string {
-    return "olleH!";
+export class HelloCommand extends Command {
+  constructor() {
+    super();
+  }
+
+  run<T, P>(params: P): T {
+    return "olleH!" as T;
   }
 }
