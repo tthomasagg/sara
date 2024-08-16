@@ -1,6 +1,6 @@
 // import all necessary packages
-import Registry from "./registry";
-import { Command } from "./command";
+import Registry from "../registry";
+import { Command } from "../command";
 
 // mock command
 class MockCommand extends Command {
